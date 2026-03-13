@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>مصحف هُدَى - القراءة والصوت</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Amiri&family=Cairo:wght@400;700&display=swap');
+        body { background: #05070a; color: white; font-family: 'Cairo', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
+        .space-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .star { position: absolute; background: white; border-radius: 50%; animation: twinkle 3s infinite; }
+        .planet { position: absolute; background: radial-gradient(circle, #e3b341, #9e7a25); border-radius: 50%; opacity: 0.2; animation: float 15s infinite ease-in-out; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+        @keyframes float { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(20px, -20px); } }
+        .ayah-window { background: #fffdf2; color: #1a1a1a; font-family: 'Amiri', serif; padding: 35px; border-radius: 30px; border: 4px solid #e3b341; box-shadow: 0 0 50px rgba(227,179,65,0.4); text-align: center; font-size: 1.8rem; line-height: 2.2; min-height: 300px; display: flex; align-items: center; justify-content: center; }
+        .gold-btn { background: #e3b341; color: black; font-weight: bold; padding: 12px 30px; border-radius: 12px; transition: 0.3s; }
+        .gold-btn:active { transform: scale(0.9); }
+        select { background: #161b22; color: white; border: 1px solid #e3b341; padding: 10px; border-radius: 10px; width: 100%; max-width: 300px; outline: none; }
+    </style>
+</head>
+<body class="p-6">
+    <div class="space-bg" id="space"></div>
+    <header class="w-full max-w-md flex justify-between mb-8">
+        <button onclick="location.href='index.html'" class="text-[#e3b341] font-bold">✕ رجوع</button>
+        <img src="https://img.icons8.com/ios-filled/100/e3b341/quran.png" class="w-10 h-10">
+    </header>
+
+    <select id="surahSelect" onchange="fetchSurahContent()" class="mb-8">
+        <option>جاري تحميل السور...</option>
+    </select>
+
+    <div id="ayahDisplay" class="ayah-window w-full max-w-md mb-8">اختر سورة للبدء</div>
+
+    <div class="flex gap-4 mb-10">
+        <button onclick="prev()" class="bg-white/10 px-6 py-2 rounded-xl">السابق</button>
+        <button onclick="next()" class="gold-btn">التالي</button>
+    </div>
+
+    <audio id="mainAudio"></audio>
+    <footer class="text-xs text-gray-500 mt-auto">تطوير: [اسمك هنا] | هُدَى ©</footer>
+
+    <script>
+        let ayahs = []; let current = 0;
+        const audio = document.getElementById('mainAudio');
+
+        // جلب السور من رابطك
+        fetch('https://quran.yousefheiba.com/api/surahs')
+            .then(r => r.json()).then(data => {
+                const s = document.getElementById('surahSelect');
+                s.innerHTML = '<option disabled selected>اختر السورة</option>';
+                data.forEach(surah => {
+                    let o = document.createElement('option');
+                    o.value = surah.id; o.text = surah.name; s.add(o);
+                });
+            });
+
+        function fetchSurahContent() {
+            const id = document.getElementById('surahSelect').value;
+            // تشغيل صوت ياسر الدوسري من رابطك
+            audio.src = `https://quran.yousefheiba.com/api/surahAudio?reciter=Yasser-Al-Dosari&id=${id}`;
+            audio.play();
+
+            // جلب نصوص الآيات (استخدمنا مصدر موثوق للنصوص)
+            fetch(`https://api.alquran.cloud/v1/surah/${id}`)
+                .then(r => r.json()).then(d => {
+                    ayahs = d.data.ayahs; current = 0; update();
+                });
+        }
+
+        function update() {
+            document.getElementById('ayahDisplay').innerText = ayahs[current].text +splay: flex; flex-direction: column; a
+        }
+        function next() { if(current < ayahs.length-1) { current++; update(); } }
+        function prev() { if(current > 0) { current--; update(); } }
+
+        // توليد النجوم
+        const space = document.getElementById('space');
+        for (let i = 0; i < 50; i++) {
+            const st = document.createElement('div'); st.className='star'; st.style.top=Math.random()*100+'%'; st.style.left=Math.random()*100+'%'; space.appendChild(st);
+        }
+    </script>
+</body>
+</html>
