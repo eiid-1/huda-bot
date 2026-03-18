@@ -10,14 +10,22 @@
             font-family: 'Courier New', Courier, monospace;
             overflow: hidden;
             margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
         #terminal {
             padding: 20px;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
         .line {
@@ -38,10 +46,28 @@
             50% { border-color: #00FF41 }
         }
 
-        .glitch {
-            font-size: 1.2em;
+        /* تنسيق الرسالة العريضة في المنتصف */
+        #hacked-message {
+            display: none; /* مخفية في البداية */
+            position: absolute;
+            background-color: rgba(255, 0, 0, 0.85); /* خلفية حمراء شفافة */
+            color: white;
+            font-size: 3em;
             font-weight: bold;
-            text-shadow: 2px 2px #ff0000, -2px -2px #0000ff;
+            text-align: center;
+            padding: 40px;
+            width: 80%;
+            border: 5px solid white;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+            z-index: 100;
+            text-shadow: 2px 2px 4px #000;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 0, 0, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(255, 0, 0, 1); }
+            100% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 0, 0, 0.7); }
         }
 
         #matrix-bg {
@@ -67,7 +93,10 @@
     <div class="line" style="color: red;">[CRITICAL] ENCRYPTION KEY FOUND</div>
     <div class="line">Downloading User Data: [||||||||||          ] 50%</div>
     <div class="line">Accessing Private Files... SUCCESS</div>
-    <div class="line" id="dynamic-text"></div>
+</div>
+
+<div id="hacked-message">
+    تم الاختراق عن طريق عيد السيبراني
 </div>
 
 <script>
@@ -104,7 +133,7 @@
 
     setInterval(drawMatrix, 35);
 
-    // إضافة نصوص عشوائية توحي بالتهكير
+    // إضافة نصوص عشوائية توحي بالتهكير ثم إظهار الرسالة
     const terminal = document.getElementById('terminal');
     const logs = [
         "> Scanning network interfaces...",
@@ -114,7 +143,9 @@
         "> Fetching browsing history...",
         "> Extracting passwords...",
         "> SYSTEM FAILURE IMMINENT",
-        "> Sending data to remote server..."
+        "> Sending data to remote server...",
+        "> ------------------------------------",
+        "> OPERATION COMPLETE."
     ];
 
     let i = 0;
@@ -126,15 +157,16 @@
             terminal.appendChild(div);
             i++;
         } else {
-            const glitch = document.createElement('div');
-            glitch.className = 'line glitch';
-            glitch.innerHTML = "DEVICE COMPROMISED - YOU ARE NEXT!";
-            terminal.appendChild(glitch);
             clearInterval(logInterval);
+            showHackedMessage();
         }
     }
 
-    const logInterval = setInterval(addLog, 1500);
+    const logInterval = setInterval(addLog, 1200); // سرعة ظهور الأسطر
+
+    function showHackedMessage() {
+        document.getElementById('hacked-message').style.display = 'block';
+    }
 </script>
 
 </body>
